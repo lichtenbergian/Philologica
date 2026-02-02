@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="it" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR Specializzato - Philologica</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        #imagePreview {
+            max-height: 400px;
+            object-fit: contain;
+            background: #1a1a1a;
+            border-radius: 8px;
+        }
+        
+        .progress {
+            height: 20px;
+        }
+        
+        .language-badge {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .language-badge:hover {
+            transform: scale(1.05);
+        }
+        
+        .language-badge.active {
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.5);
+        }
+        
+        .result-card {
+            transition: all 0.3s ease;
+            min-height: 300px;
+        }
+        
+        .confidence-meter {
+            width: 100%;
+            height: 10px;
+            background: #2d2d2d;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        
+        .confidence-low { background: #dc3545; }
+        .confidence-medium { background: #ffc107; }
+        .confidence-high { background: #198754; }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <div class="me-2" style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                    <i class="bi bi-scroll text-white"></i>
+                </div>
+                <span class="fs-5 fw-bold">Philologica</span>
+            </a>
+            
+            <div class="navbar-nav">
+                <a class="nav-link" href="index.html">
+                    <i class="bi bi-arrow-left me-1"></i> Torna alla Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container py-5">
+        <h1 class="mb-4">
+            <i class="bi bi-file-earmark-image me-2"></i> OCR Specializzato per Testi Antichi
+        </h1>
+        <p class="text-muted mb-5">
+            Carica un'immagine di un testo antico (manoscritto, papiro, stampato) e ottieni una trascrizione digitale.
+            Supporta latino, greco antico, ebraico, arabo e altre lingue antiche.
+        </p>
+        
+        <div class="row">
+            <!-- Left Column: Upload & Settings -->
+            <div class="col-lg-4">
+                <div class="card border-0 bg-dark mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">
+                            <i class="bi bi-upload me-2"></i> Carica Immagine
+                        </h5>
+                        
+                        <!-- File Upload -->
+                        <div class="mb-4">
+                            <input type="file" class="form-control" id="imageInput" accept=".jpg,.jpeg,.png,.tiff,.bmp">
+                            <div class="form-text">
+                                Supporta JPG, PNG, TIFF, BMP. Max 10MB.
+                            </div>
+                        </div>
+                        
+                        <!-- Image Preview -->
+                        <div class="mb-4">
+                            <div id="previewContainer" class="text-center" style="display: none;">
+                                <img id="imagePreview" class="img-fluid mb-2">
+                                <button class="btn btn-sm btn-outline-danger" onclick="clearImage()">
+                                    <i class="bi bi-trash me-1"></i> Rimuovi
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Language Selection -->
+                        <h6 class="mb-3">
+                            <i class="bi bi-translate me-2"></i> Lingua del Testo
+                        </h6>
+                        <div class="mb-4">
+                            <div class="d-flex flex-wrap gap-2" id="languageSelection">
+                                <!-- Popolato dinamicamente -->
+                            </div>
+                        </div>
+                        
+                        <!-- Engine Selection -->
+                        <h6 class="mb-3">
+                            <i class="bi bi-gear me-2"></i> Motore OCR
+                        </h6>
+                        <div class="mb-4">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="engine" id="engineAuto" value="auto" checked>
+                                <label class="form-check-label" for="engineAuto">
+                                    <strong>Auto</strong> (seleziona automaticamente il migliore)
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="engine" id="engineKraken" value="kraken">
+                                <label class="form-check-label" for="engineKraken">
+                                    <strong>Kraken</strong> (ideale per manoscritti)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="engine" id="engineTesseract" value="tesseract">
+                                <label class="form-check-label" for="engineTesseract">
+                                    <strong>Tesseract</strong> (per stampati)
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Process Button -->
+                        <button class="btn btn-primary w-100 py-3" onclick="processImage()" id="processBtn">
+                            <i class="bi bi-magic me-2"></i> Processa OCR
+                        </button>
+                        
+                        <!-- Progress Bar -->
+                        <div class="mt-3" id="progressContainer" style="display: none;">
+                            <div class="d-flex justify-content-between mb-1">
+                                <small>Processamento...</small>
+                                <small id="progressText">0%</small>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                     id="progressBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Info Panel -->
+                <div class="card border-0 bg-dark">
+                    <div class="card-body">
+                        <h6 class="card-title">
+                            <i class="bi bi-lightbulb me-2"></i> Suggerimenti
+                        </h6>
+                        <ul class="small text-muted">
+                            <li>Usa immagini ad alta risoluzione (min. 300 DPI)</li>
+                            <li>Assicurati che il testo sia diritto e ben illuminato</li>
+                            <li>Per manoscritti illeggibili, usa Kraken</li>
+                            <li>I testi stampati funzionano meglio con Tesseract</li>
+                            <li>Puoi correggere manualmente il testo dopo l'OCR</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: Results -->
+            <div class="col-lg-8">
+                <div class="card border-0 bg-dark result-card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">
+                            <i class="bi bi-file-text me-2"></i> Risultati OCR
+                        </h5>
+                        
+                        <!-- Results Area -->
+                        <div id="resultsArea" style="display: none;">
+                            <!-- Confidence Meter -->
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between">
+                                    <span>Confidenza della trascrizione:</span>
+                                    <span id="confidenceValue" class="fw-bold">0%</span>
+                                </div>
+                                <div class="confidence-meter">
+                                    <div id="confidenceFill" class="confidence-fill" style="width: 0%"></div>
+                                </div>
+                                <small class="text-muted">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Un valore superiore al 85% indica una buona trascrizione.
+                                </small>
+                            </div>
+                            
+                            <!-- Metadata -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="card bg-secondary bg-opacity-10">
+                                        <div class="card-body py-2">
+                                            <small class="text-muted">Motore utilizzato</small>
+                                            <div id="engineUsed" class="fw-bold">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card bg-secondary bg-opacity-10">
+                                        <div class="card-body py-2">
+                                            <small class="text-muted">Dimensioni immagine</small>
+                                            <div id="imageDimensions" class="fw-bold">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Text Output -->
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6>Testo Trascritto:</h6>
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="copyText()">
+                                            <i class="bi bi-clipboard me-1"></i> Copia
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="downloadText()">
+                                            <i class="bi bi-download me-1"></i> Scarica
+                                        </button>
+                                        <div class="btn-group">
+                                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                                                    type="button" data-bs-toggle="dropdown">
+                                                Formato
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="#" onclick="exportFormat('txt')">.txt</a></li>
+                                                <li><a class="dropdown-item" href="#" onclick="exportFormat('json')">.json</a></li>
+                                                <li><a class="dropdown-item" href="#" onclick="exportFormat('tei')">TEI XML</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <textarea class="form-control bg-dark text-light" 
+                                          id="textOutput" 
+                                          rows="15" 
+                                          style="font-family: 'Courier New', monospace;"
+                                          placeholder="Il testo trascritto apparirà qui..."></textarea>
+                                <div class="text-end mt-2">
+                                    <small class="text-muted">
+                                        Caratteri: <span id="charCount">0</span> • 
+                                        Parole: <span id="wordCount">0</span>
+                                    </small>
+                                </div>
+                            </div>
+                            
+                            <!-- Manual Correction -->
+                            <div class="accordion" id="correctionAccordion">
+                                <div class="accordion-item bg-dark border-secondary">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button bg-dark text-light collapsed" 
+                                                type="button" 
+                                                data-bs-toggle="collapse" 
+                                                data-bs-target="#correctionCollapse">
+                                            <i class="bi bi-pencil me-2"></i> Correzione Manuale
+                                        </button>
+                                    </h2>
+                                    <div id="correctionCollapse" class="accordion-collapse collapse">
+                                        <div class="accordion-body">
+                                            <p class="small text-muted">
+                                                Corregge eventuali errori di riconoscimento. Le correzioni vengono salvate per migliorare futuri processamenti.
+                                            </p>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="suggestCorrection()">
+                                                <i class="bi bi-save me-1"></i> Salva correzione
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Empty State -->
+                        <div id="emptyState" class="text-center py-5">
+                            <div class="display-1 text-muted mb-3">
+                                <i class="bi bi-file-earmark-image"></i>
+                            </div>
+                            <h5 class="text-muted">Nessuna immagine processata</h5>
+                            <p class="text-muted">
+                                Carica un'immagine e premi "Processa OCR" per iniziare.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark border-top border-secondary py-3">
+        <div class="container">
+            <div class="text-center text-muted small">
+                <i class="bi bi-cpu me-1"></i> Philologica OCR • 
+                <span id="apiEndpoint">/api/ocr</span> • 
+                <span id="currentTime">--:--:--</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/ocr.js"></script>
+    <script>
+        // Lingue supportate
+        const supportedLanguages = [
+            { code: 'lat', name: 'Latino', flag: '🏛️' },
+            { code: 'grc', name: 'Greco Antico', flag: '🏺' },
+            { code: 'heb', name: 'Ebraico', flag: '✡️' },
+            { code: 'ara', name: 'Arabo', flag: '🕌' },
+            { code: 'eng', name: 'Inglese', flag: '🇬🇧' },
+            { code: 'ita', name: 'Italiano', flag: '🇮🇹' }
+        ];
+        
+        // Inizializza selezione lingue
+        function initLanguageSelection() {
+            const container = document.getElementById('languageSelection');
+            container.innerHTML = '';
+            
+            supportedLanguages.forEach(lang => {
+                const badge = document.createElement('span');
+                badge.className = 'language-badge badge bg-secondary bg-opacity-25 p-2';
+                badge.innerHTML = `${lang.flag} ${lang.name}`;
+                badge.dataset.code = lang.code;
+                
+                badge.onclick = function() {
+                    document.querySelectorAll('.language-badge').forEach(b => {
+                        b.classList.remove('active');
+                        b.classList.replace('bg-primary', 'bg-secondary');
+                    });
+                    this.classList.add('active');
+                    this.classList.replace('bg-secondary', 'bg-primary');
+                };
+                
+                container.appendChild(badge);
+            });
+            
+            // Seleziona il primo per default
+            if (container.firstChild) {
+                container.firstChild.click();
+            }
+        }
+        
+        // Aggiorna contatori testo
+        function updateTextCounters() {
+            const text = document.getElementById('textOutput').value;
+            document.getElementById('charCount').textContent = text.length;
+            document.getElementById('wordCount').textContent = text.split(/\s+/).filter(w => w.length > 0).length;
+        }
+        
+        // Immagine preview
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = e.target.result;
+                    document.getElementById('previewContainer').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Aggiorna orario
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent = 
+                now.toLocaleTimeString('it-IT');
+        }
+        
+        // Inizializzazione
+        document.addEventListener('DOMContentLoaded', function() {
+            initLanguageSelection();
+            setInterval(updateTime, 1000);
+            updateTime();
+            
+            // Aggiorna contatori mentre si scrive
+            document.getElementById('textOutput').addEventListener('input', updateTextCounters);
+        });
+        
+        // Funzioni globali
+        function clearImage() {
+            document.getElementById('imageInput').value = '';
+            document.getElementById('previewContainer').style.display = 'none';
+            document.getElementById('imagePreview').src = '';
+        }
+        
+        function copyText() {
+            const textarea = document.getElementById('textOutput');
+            textarea.select();
+            document.execCommand('copy');
+            
+            // Feedback visivo
+            const btn = event.target.closest('button');
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check me-1"></i> Copiato!';
+            setTimeout(() => btn.innerHTML = original, 2000);
+        }
+        
+        function downloadText() {
+            const text = document.getElementById('textOutput').value;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `philologica_${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        function exportFormat(format) {
+            const text = document.getElementById('textOutput').value;
+            alert(`Esportazione in ${format.toUpperCase()} verrà implementata prossimamente.`);
+            // Qui si integrerà con l'endpoint /api/export
+        }
+        
+        function suggestCorrection() {
+            alert('Il sistema di correzione verrà implementato nella prossima versione.');
+        }
+    </script>
+</body>
+</html>

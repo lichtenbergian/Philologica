@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="it" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Philologica - Strumenti per Testi Antichi</title>
+    
+    <!-- Bootstrap 5 + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Stili personalizzati -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3) !important;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <div class="feature-icon me-2">
+                    <i class="bi bi-scroll text-white fs-4"></i>
+                </div>
+                <span class="fs-3 fw-bold">Philologica</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">
+                            <i class="bi bi-house me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="ocr.html">
+                            <i class="bi bi-file-earmark-image me-1"></i> OCR
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-file-text me-1"></i> Analisi
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-translate me-1"></i> Traduzione
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-database me-1"></i> Corpus
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#aboutModal">
+                            <i class="bi bi-info-circle me-1"></i> Info
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="py-5">
+        <div class="container py-5">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-3 fw-bold mb-4">
+                        Strumenti <span class="hero-gradient">Open Source</span> per la Filologia Digitale
+                    </h1>
+                    <p class="lead text-muted mb-4">
+                        Una piattaforma completa per la digitalizzazione, analisi e studio di testi antichi.
+                        Progettata per filologi, storici, papirologi e ricercatori.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a href="ocr.html" class="btn btn-primary btn-lg px-4">
+                            <i class="bi bi-lightning-charge me-2"></i> Prova l'OCR
+                        </a>
+                        <a href="#features" class="btn btn-outline-secondary btn-lg px-4">
+                            <i class="bi bi-gear me-2"></i> Scopri di più
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card border-0 bg-dark p-3 shadow-lg">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-graph-up me-2"></i> Demo in tempo reale
+                            </h5>
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>
+                                <strong>API attiva:</strong> <code id="apiStatus">Verifica connessione...</code>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="card bg-secondary bg-opacity-10 h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-subtitle mb-2 text-muted">Documenti processati</h6>
+                                            <div class="display-6" id="docCount">0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card bg-secondary bg-opacity-10 h-100">
+                                        <div class="card-body">
+                                            <h6 class="card-subtitle mb-2 text-muted">Motori OCR</h6>
+                                            <div class="display-6" id="engineCount">2</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="py-5 bg-dark bg-opacity-50">
+        <div class="container py-5">
+            <h2 class="text-center mb-5 display-5 fw-bold">Funzionalità</h2>
+            
+            <div class="row g-4">
+                <!-- OCR Card -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card card-hover h-100 border-0 bg-dark">
+                        <div class="card-body p-4">
+                            <div class="feature-icon">
+                                <i class="bi bi-file-earmark-image text-white fs-4"></i>
+                            </div>
+                            <h5 class="card-title">OCR Specializzato</h5>
+                            <p class="card-text text-muted">
+                                Riconoscimento ottico per manoscritti e testi antichi con supporto multilinguaggio.
+                            </p>
+                            <ul class="list-unstyled text-muted">
+                                <li><i class="bi bi-check-circle me-2 text-success"></i> Kraken per manoscritti</li>
+                                <li><i class="bi bi-check-circle me-2 text-success"></i> Tesseract per stampati</li>
+                                <li><i class="bi bi-check-circle me-2 text-success"></i> Pre-elaborazione avanzata</li>
+                            </ul>
+                            <a href="ocr.html" class="btn btn-outline-primary w-100">Usa l'OCR</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Analisi Card -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card card-hover h-100 border-0 bg-dark">
+                        <div class="card-body p-4">
+                            <div class="feature-icon">
+                                <i class="bi bi-bar-chart text-white fs-4"></i>
+                            </div>
+                            <h5 class="card-title">Analisi Testuale</h5>
+                            <p class="card-text text-muted">
+                                Statistiche, concordanze, n-grammi e analisi linguistiche avanzate.
+                            </p>
+                            <ul class="list-unstyled text-muted">
+                                <li><i class="bi bi-check-circle me-2 text-success"></i> POS tagging</li>
+                                <li><i class="bi bi-check-circle me-2 text-success"></i> Riconoscimento entità</li>
+                                <li><i class="bi bi-check-circle me-2 text-success"></i> Analisi frequenze</li>
+                            </ul>
+                            <button class="btn btn-outline-primary w-100" disabled>Prossimamente</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Traduzione Card -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card card-hover h-100 border-0 bg-dark">
+                        <div class="card-body p-4">
+                            <div class="feature-icon">
+                                <i class="bi bi-translate text-white fs-4"></i>
+                            </div>
+                            <h5 class="card-title">Traduzione Assistita</h5>
+                            <p class="card-text text-muted">
+                                Supporto alla traduzione con glossari, contesto e memoria di traduzione.
+                            </p>
+                            <ul class="list-unstyled text-muted">
+                                <li><i class="bi bi-check-circle me-2 text-success"></i> Glossari personalizzati</li>
+                                <li><i class="bi bi-check-circle me-2 text-success"></i> Allineamento testi</li>
+                                <li><i class="bi bi-check-circle me-2 text-success"></i> Annotazioni</li>
+                            </ul>
+                            <button class="btn btn-outline-primary w-100" disabled>Prossimamente</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Corpus Card -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card card-hover h-100 border-0 bg-dark">
+                        <div class="card-body p-4">
+                            <div class="feature-icon">
+                                <i class="bi bi-database text-white fs-4"></i>
+                            </div>
+                            <h5 class="card-title">Gestione Corpus</h5>
+                            <p class="card-text text-muted">
+                                Archiviazione, ricerca e confronto di testi in formati standard.
+                            </p>
+                            <ul class="list-unstyled text-muted">
+                                <li><i class="bi bi-check-circle me-2 text-success"></i> Supporto TEI XML</li>
+                                <li><i class="bi bi-check-circle me-2 text-success"></i> Ricerca full-text</li>
+                                <li><i class="bi bi-check-circle me-2 text-success"></i> Metadati Dublin Core</li>
+                            </ul>
+                            <button class="btn btn-outline-primary w-100" disabled>Prossimamente</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Status -->
+    <section class="py-5">
+        <div class="container py-5">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card border-0 bg-dark">
+                        <div class="card-body p-5">
+                            <h3 class="card-title mb-4">
+                                <i class="bi bi-plug me-2"></i> Stato API
+                            </h3>
+                            <div id="apiStatusCard" class="mb-4">
+                                <!-- Popolato da JavaScript -->
+                            </div>
+                            <div class="d-flex gap-3">
+                                <button class="btn btn-primary" onclick="checkAPI()">
+                                    <i class="bi bi-arrow-clockwise me-2"></i> Verifica API
+                                </button>
+                                <a href="/api/docs" target="_blank" class="btn btn-outline-secondary">
+                                    <i class="bi bi-code-slash me-2"></i> Documentazione API
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark border-top border-secondary py-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                        <div class="feature-icon me-3" style="width: 40px; height: 40px;">
+                            <i class="bi bi-scroll text-white"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">Philologica</h5>
+                            <p class="text-muted mb-0 small">Open Source Digital Humanities Platform</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                    <span class="text-muted small">
+                        <i class="bi bi-github me-1"></i>
+                        <a href="https://github.com/tuo-username/philologica" class="text-decoration-none">
+                            Contribuisci su GitHub
+                        </a>
+                        • v1.0.0
+                    </span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- About Modal -->
+    <div class="modal fade" id="aboutModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">
+                        <i class="bi bi-info-circle me-2"></i> Informazioni su Philologica
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Philologica</strong> è una piattaforma open-source per la filologia digitale, nata per supportare ricercatori, filologi e storici nell'analisi di testi antichi.</p>
+                    
+                    <h6 class="mt-4">Funzionalità chiave:</h6>
+                    <ul>
+                        <li><strong>OCR specializzato</strong> per manoscritti e testi antichi</li>
+                        <li>Analisi testuale avanzata con NLP</li>
+                        <li>Supporto per lingue antiche (latino, greco antico, ebraico, arabo)</li>
+                        <li>Formati standard (TEI XML, JSON, TXT)</li>
+                        <li>API RESTful per integrazioni</li>
+                    </ul>
+                    
+                    <h6 class="mt-4">Tecnologie:</h6>
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                        <span class="badge bg-primary">Python</span>
+                        <span class="badge bg-primary">FastAPI</span>
+                        <span class="badge bg-primary">Kraken</span>
+                        <span class="badge bg-primary">Tesseract</span>
+                        <span class="badge bg-secondary">JavaScript</span>
+                        <span class="badge bg-secondary">Bootstrap 5</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+        // Verifica stato API
+        async function checkAPI() {
+            const statusCard = document.getElementById('apiStatusCard');
+            const apiStatus = document.getElementById('apiStatus');
+            
+            try {
+                const response = await fetch('/api/');
+                if (response.ok) {
+                    const data = await response.json();
+                    statusCard.innerHTML = `
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            <strong>API operativa</strong><br>
+                            <small>${data.name} v${data.version} - ${data.status}</small>
+                        </div>
+                    `;
+                    apiStatus.textContent = `Operativa (${data.name} v${data.version})`;
+                }
+            } catch (error) {
+                statusCard.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-x-circle-fill me-2"></i>
+                        <strong>API non raggiungibile</strong><br>
+                        <small>${error.message}</small>
+                    </div>
+                `;
+                apiStatus.textContent = 'Non raggiungibile';
+            }
+        }
+        
+        // Contatore animato
+        function animateCounter(elementId, target, duration = 2000) {
+            const element = document.getElementById(elementId);
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = Math.floor(target);
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 16);
+        }
+        
+        // Inizializzazione
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAPI();
+            animateCounter('docCount', 127);
+            animateCounter('engineCount', 2);
+        });
+    </script>
+</body>
+</html>

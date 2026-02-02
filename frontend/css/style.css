@@ -1,0 +1,120 @@
+/* Philologica - Stili Base */
+
+:root {
+    --philologica-primary: #667eea;
+    --philologica-secondary: #764ba2;
+    --philologica-dark: #1a1a1a;
+    --philologica-darker: #0a0a0a;
+}
+
+body {
+    background-color: var(--philologica-darker);
+    color: #f8f9fa;
+    min-height: 100vh;
+}
+
+/* Scrollbar personalizzata */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Utility */
+.text-gradient {
+    background: linear-gradient(135deg, var(--philologica-primary), var(--philologica-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.bg-gradient {
+    background: linear-gradient(135deg, var(--philologica-primary), var(--philologica-secondary));
+}
+
+/* Cards */
+.card {
+    border: 1px solid #333;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.card-header {
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid #333;
+}
+
+/* Form */
+.form-control, .form-select {
+    background-color: #2d2d2d;
+    border: 1px solid #444;
+    color: #f8f9fa;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: #333;
+    border-color: var(--philologica-primary);
+    box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+    color: #f8f9fa;
+}
+
+/* Buttons */
+.btn-primary {
+    background: linear-gradient(135deg, var(--philologica-primary), var(--philologica-secondary));
+    border: none;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    transition: all 0.2s;
+}
+
+/* Code blocks */
+code {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #e83e8c;
+}
+
+/* Tables */
+.table {
+    color: #f8f9fa;
+}
+
+.table-dark {
+    background-color: #1a1a1a;
+}
+
+/* Alerts */
+.alert {
+    border: none;
+    border-left: 4px solid;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Loading spinner */
+.spinner-border.philologica {
+    background: conic-gradient(from 0deg, var(--philologica-primary), var(--philologica-secondary));
+    -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 4px), #000 0);
+    animation: spinner-border 0.75s linear infinite;
+}
